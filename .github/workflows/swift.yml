@@ -17,13 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Print project info
-        run: |
-          echo "::debug::Xcode version:"
-          xcodebuild -version | while IFS= read -r line; do echo "::debug::$line"; done
-          echo "::debug::Swift version:"
-          swift --version | while IFS= read -r line; do echo "::debug::$line"; done
-
       - name: Build the project with Swift 5.0
         run: |
           { 
@@ -32,7 +25,7 @@ jobs:
               -derivedDataPath $PWD/build \
               SWIFT_VERSION=5.0
           } 2>&1 | while IFS= read -r line; do 
-            if [[ $line =~ ^(Fetching from|Resolved source packages|Creating working copy of package|Checking out) ]] || [[ $line =~ (error|fatal error) ]]; then
+            if [[ $line =~ ^(Fetching from|Resolved source packages|Creating working copy of package|Checking out|** BUILD FAILED **|The following build commands failed:) ]] || [[ $line =~ (error|fatal error) ]]; then
               echo "$line"
             else
               echo "::debug::$line"

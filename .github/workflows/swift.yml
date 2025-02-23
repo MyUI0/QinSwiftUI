@@ -23,7 +23,7 @@ jobs:
 
       - name: Build the project
         run: |
-          xcodebuild -workspace YourProject.xcworkspace -scheme YourScheme -sdk iphoneos -configuration Release clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -derivedDataPath $PWD/build
+          xcodebuild -workspace QinSwiftUI.xcworkspace -scheme "Qin Music" -sdk iphoneos -configuration Release clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -derivedDataPath $PWD/build
 
       - name: Create Payload directory
         run: |
@@ -31,15 +31,15 @@ jobs:
 
       - name: Copy .app to Payload
         run: |
-          cp -r $PWD/build/Build/Products/Release-iphoneos/YourApp.app $PWD/build/Payload/
+          cp -r $PWD/build/Build/Products/Release-iphoneos/Qin\ Music.app $PWD/build/Payload/
 
       - name: Zip Payload to IPA
         run: |
           cd $PWD/build
-          zip -r YourApp.ipa Payload
+          zip -r QinMusic.ipa Payload
 
       - name: Upload IPA as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: YourApp.ipa
-          path: build/YourApp.ipa
+          name: QinMusic.ipa
+          path: build/QinMusic.ipa

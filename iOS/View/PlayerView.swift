@@ -274,7 +274,7 @@ struct PlayinglistView: View {
     var body: some View {
         FetchedResultsView(entity: Song.entity(), predicate: NSPredicate(format: "%K IN %@", "id", songsId)) { (results: FetchedResults<Song>) in
             ScrollView {
-//                if let songs = results {
+              if let songs = results {
                     LazyVStack {
                         ForEach(songs.sorted(by: { (left, right) -> Bool in
                             let lIndex = songsId.firstIndex(of: Int(left.id))!
@@ -286,7 +286,7 @@ struct PlayinglistView: View {
                         }
                     }
                     .padding(.vertical)
-//                }
+               }
             }
         }
     }

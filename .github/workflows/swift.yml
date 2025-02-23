@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up Xcode
         run: |
@@ -48,7 +48,7 @@ jobs:
           zip -r YourApp.ipa Payload
 
       - name: Upload IPA as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: YourApp.ipa
           path: build/YourApp.ipa

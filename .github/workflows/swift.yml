@@ -17,7 +17,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Print project info
+        run: |
+          echo "::debug::Xcode version:"
+          xcodebuild -version | while IFS= read -r line; do echo "::debug::$line"; done
+          echo "::debug::Swift version:"
+          swift --version | while IFS= read -r line; do echo "::debug::$line"; done
 
+    
       - name: Build the project with Swift 5.0
         run: |
           xcodebuild -project Qin.xcodeproj -scheme "Qin (iOS)" -sdk iphoneos -configuration Release clean build \

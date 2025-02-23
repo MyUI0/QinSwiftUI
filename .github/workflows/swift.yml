@@ -17,14 +17,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install dependencies
+      - name: Install SwiftLint (optional)
         run: |
           brew install swiftlint
-          brew install cocoapods
-
-      - name: Install CocoaPods dependencies
-        run: |
-          pod install
 
       - name: Build the project
         run: |

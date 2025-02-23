@@ -26,11 +26,18 @@ jobs:
 
       - name: Build the project with Swift 5.0
         run: |
-          # 重定向标准输出到 /dev/null，只保留标准错误输出
-          xcodebuild -project Qin.xcodeproj -scheme "Qin (iOS)" -sdk iphoneos -configuration Release clean build \
-            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
-            -derivedDataPath $PWD/build \
-            SWIFT_VERSION=5.0 > /dev/null
+          { 
+            xcodebuild -project Qin.xcodeproj -scheme "Qin (iOS)" -sdk iphoneos -configuration Release clean build \
+              CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
+              -derivedDataPath $PWD/build \
+              SWIFT_VERSION=5.0
+          } 2>&1 | while IFS= read -r line; do 
+            if [[ $line =~ ^\{[[:space:]]*platform: ]]; then
+              echo "::debug::$line"
+            else
+              echo "$line"
+            fi
+          done
 
       - name: Create Payload directory
         run: |

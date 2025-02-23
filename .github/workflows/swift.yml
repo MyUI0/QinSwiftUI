@@ -17,9 +17,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: List schemes
+      - name: Set Xcode Version
         run: |
-          xcodebuild -project Qin.xcodeproj -list
+          sudo xcode-select -s /Applications/Xcode_15.4.app
+          xcodebuild -version
+          swift --version
+
+      - name: Resolve Dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies -project Qin.xcodeproj -scheme "Qin (iOS)"
+
+      - name: Clean Build
+        run: |
+          xcodebuild clean -project Qin.xcodeproj -scheme "Qin (iOS)"
 
       - name: Build the project
         run: |

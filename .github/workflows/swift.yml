@@ -17,13 +17,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install SwiftLint (optional)
-        run: |
-          brew install swiftlint
-
       - name: Build the project
         run: |
-          xcodebuild -workspace QinSwiftUI.xcworkspace -scheme "Qin Music" -sdk iphoneos -configuration Release clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -derivedDataPath $PWD/build
+          xcodebuild -project QinSwiftUI.xcodeproj -scheme "Qin Music" -sdk iphoneos -configuration Release clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -derivedDataPath $PWD/build
 
       - name: Create Payload directory
         run: |

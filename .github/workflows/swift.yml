@@ -1,0 +1,53 @@
+name: Build and Export Unsigned IPA
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_14.2.app
+
+      - name: Install dependencies
+        run: |
+          brew install swiftlint
+          brew install cocoapods
+
+      - name: Install CocoaPods dependencies
+        run: |
+          pod install
+
+      - name: Build the project
+        run: |
+          xcodebuild -workspace YourProject.xcworkspace -scheme YourScheme -sdk iphoneos -configuration Release clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -derivedDataPath $PWD/build
+
+      - name: Create Payload directory
+        run: |
+          mkdir -p $PWD/build/Payload
+
+      - name: Copy .app to Payload
+        run: |
+          cp -r $PWD/build/Build/Products/Release-iphoneos/YourApp.app $PWD/build/Payload/
+
+      - name: Zip Payload to IPA
+        run: |
+          cd $PWD/build
+          zip -r YourApp.ipa Payload
+
+      - name: Upload IPA as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: YourApp.ipa
+          path: build/YourApp.ipa

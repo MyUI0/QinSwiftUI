@@ -1,18 +1,13 @@
-name: Build and Export IPA (Manual + No Sign)
+name: Build and Export Unsigned IPA
 
 on:
-  workflow_dispatch:
-    inputs:
-      build_type:
-        description: '构建类型'
-        required: true
-        default: 'debug'
-        type: choice
-        options:
-          - debug
-          - release
   push:
-    branches: [main]
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:  # 添加手动触发工作流的配置
 
 jobs:
   build:
@@ -22,13 +17,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build project
+      - name: Set up Xcode
         run: |
-          xcodebuild -workspace YourProject.xcworkspace -scheme YourScheme \
-          CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+          sudo xcode-select -s /Applications/Xcode_14.2.app
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Install dependencies
+        run: |
+          brew install swiftlint
+          brew install cocoapods
+
+      - name: Install CocoaPods dependencies
+        run: |
+          pod install
+
+      - name: Build the project
+        run: |
+          xcodebuild -workspace YourProject.xcworkspace -scheme YourScheme -sdk iphoneos -configuration Release clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -derivedDataPath $PWD/build
+
+      - name: Create Payload directory
+        run: |
+          mkdir -p $PWD/build/Payload
+
+      - name: Copy .app to Payload
+        run: |
+          cp -r $PWD/build/Build/Products/Release-iphoneos/YourApp.app $PWD/build/Payload/
+
+      - name: Zip Payload to IPA
+        run: |
+          cd $PWD/build
+          zip -r YourApp.ipa Payload
+
+      - name: Upload IPA as artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: app-unsigned-${{ github.event.inputs.build_type }}.ipa
+          name: YourApp.ipa
           path: build/YourApp.ipa
